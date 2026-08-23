@@ -31,6 +31,27 @@ Pod::Spec.new do |s|
   }
   
   if mku.libs_found
+    current_dir = ENV['PWD'] || '/'
+    pubspec_lock_path = MediaKitUtils::find_nearest_pubspec_lock(current_dir)
+    if pubspec_lock_path != ''
+      app_dir = File.dirname(pubspec_lock_path)
+      possible_dirs = [
+        File.join(app_dir, 'ios', '.symlinks', 'plugins', mku.libs_package, 'ios'),
+        File.join(app_dir, 'ios', 'Flutter', 'ephemeral', '.symlinks', 'plugins', mku.libs_package, 'ios')
+      ]
+      possible_dirs.each do |dir|
+        if File.directory?(dir)
+          real_dir = File.realpath(dir) rescue dir
+          [dir, real_dir].uniq.each do |target_dir|
+            if !File.directory?("#{target_dir}/Frameworks/.symlinks/mpv")
+              puts "[media_kit_video] ⚡ Executing fallback make in: #{target_dir}"
+              system("cd '#{target_dir}' && make")
+            end
+          end
+        end
+      end
+    end
+
     # Define paths to frameworks dir
     framework_search_paths_iphoneos        = sprintf('$(PROJECT_DIR)/../.symlinks/plugins/%s/ios/Frameworks/.symlinks/mpv/ios', mku.libs_package)
     framework_search_paths_iphonesimulator = sprintf('$(PROJECT_DIR)/../.symlinks/plugins/%s/ios/Frameworks/.symlinks/mpv/ios-simulator', mku.libs_package)
