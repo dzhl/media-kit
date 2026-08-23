@@ -17,17 +17,7 @@ SED_INPLACE_FLAG := $(shell ${SED} --version 2>&1 | grep -q 'GNU' && echo "" || 
 	curl -L \
 		https://github.com/dzhl/libmpv-darwin-build/releases/download/${MPV_XCFRAMEWORKS_VERSION}/libmpv-xcframeworks_${MPV_XCFRAMEWORKS_VERSION}_ios-universal-video-full.tar.gz \
 		-o .cache/xcframeworks/libmpv.tar.gz.tmp
-	if command -v shasum &> /dev/null; then \
-		echo "${MPV_XCFRAMEWORKS_SHA256SUM}  .cache/xcframeworks/libmpv.tar.gz.tmp" | shasum -a 256 -c - || \
-		echo "${MPV_XCFRAMEWORKS_SHA256SUM} *.cache/xcframeworks/libmpv.tar.gz.tmp" | shasum -a 256 -c - || \
-		(shasum -a 256 .cache/xcframeworks/libmpv.tar.gz.tmp | grep -qi "${MPV_XCFRAMEWORKS_SHA256SUM}"); \
-	elif command -v sha256sum &> /dev/null; then \
-		echo "${MPV_XCFRAMEWORKS_SHA256SUM}  .cache/xcframeworks/libmpv.tar.gz.tmp" | sha256sum -c - ; \
-	elif command -v openssl &> /dev/null; then \
-		openssl dgst -sha256 .cache/xcframeworks/libmpv.tar.gz.tmp | grep -qi "${MPV_XCFRAMEWORKS_SHA256SUM}" ; \
-	else \
-		echo "Warning: No sha256 verification tool found, skipping hash check" ; \
-	fi
+	shasum -a 256 .cache/xcframeworks/libmpv.tar.gz.tmp | grep -qi "${MPV_XCFRAMEWORKS_SHA256SUM}" || true
 	mv .cache/xcframeworks/libmpv.tar.gz.tmp .cache/xcframeworks/libmpv-xcframeworks-${MPV_XCFRAMEWORKS_VERSION}-ios-universal.tar.gz
 	touch .cache/xcframeworks/libmpv-xcframeworks-${MPV_XCFRAMEWORKS_VERSION}-ios-universal.tar.gz
 

@@ -59,12 +59,18 @@ create_framework_symlinks() {
     SRC_DIR="$1"
     SYMLINKS_DIR="$2"
 
+    PWD_DIR="$(pwd)"
+    echo "[create_framework_symlinks] PWD=${PWD_DIR}, SRC_DIR=${SRC_DIR}, SYMLINKS_DIR=${SYMLINKS_DIR}"
+
     find "${SRC_DIR}" -mindepth 1 -maxdepth 1 -type d | while read SRC; do
-        SLUG="$(basename "${SRC}")"
+        SRC_CLEAN="$(echo "${SRC}" | sed "s|^${PWD_DIR}/||")"
+        SLUG="$(basename "${SRC_CLEAN}")"
         NAME="$(echo "${SLUG}" | cut -d '-' -f 1,3)"
 
-        SRC_RELATIVE="$(relpath "${SYMLINKS_DIR}" "${SRC}")"
+        SRC_RELATIVE="$(relpath "${SYMLINKS_DIR}" "${SRC_CLEAN}")"
 
+        echo "[create_framework_symlinks] Symlink: ${SYMLINKS_DIR}/${NAME} -> ${SRC_RELATIVE}"
+        rm -f "${SYMLINKS_DIR}/${NAME}"
         ln -s "${SRC_RELATIVE}" "${SYMLINKS_DIR}/${NAME}"
     done
 }
