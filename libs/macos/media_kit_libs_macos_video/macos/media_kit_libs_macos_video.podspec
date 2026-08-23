@@ -3,10 +3,10 @@
 # Run `pod lib lint media_kit_libs_macos_video.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  podspec_dir = File.dirname(__FILE__)
+  podspec_dir = File.realpath(File.dirname(__FILE__))
   puts "=========================================================================="
   puts "[media_kit_libs_macos_video] 🌟 Starting automated build execution..."
-  puts "[media_kit_libs_macos_video] Target directory: #{podspec_dir}"
+  puts "[media_kit_libs_macos_video] Canonical target directory: #{podspec_dir}"
   
   make_cmd = "cd '#{podspec_dir}' && make"
   puts "[media_kit_libs_macos_video] Executing command: #{make_cmd}"
